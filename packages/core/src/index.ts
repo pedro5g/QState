@@ -4,3 +4,4 @@ export * from './rate-limiter';
 export * from './queue';
 export * from './vanila';
 export * from './query-manager';
+export * from './parser';

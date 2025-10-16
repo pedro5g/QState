@@ -45,25 +45,25 @@ describe('QueryQueue', () => {
       key: 'foo',
       value: '10',
       method: 'push',
-      options: { history: historyAdapter, pathname: '/page' },
+      options: { historyAdapter, pathname: '/page' },
     });
     sut.enqueue({
       key: 'bar',
       value: '123',
       method: 'push',
-      options: { history: historyAdapter, pathname: '/page' },
+      options: { historyAdapter, pathname: '/page' },
     });
     sut.enqueue({
       key: 'keep',
       value: null,
       method: 'push',
-      options: { history: historyAdapter, pathname: '/page' },
+      options: { historyAdapter, pathname: '/page' },
     });
     sut.enqueue({
       key: 'foo',
       value: null,
       method: 'push',
-      options: { history: historyAdapter, pathname: '/page' },
+      options: { historyAdapter, pathname: '/page' },
     });
 
     sut.process();
@@ -81,7 +81,7 @@ describe('QueryQueue', () => {
       key: 'bar',
       value: '42',
       method: 'replace',
-      options: { history: historyAdapter, pathname: '/new', shallow: false },
+      options: { historyAdapter, pathname: '/new', shallow: false },
     });
 
     sut.process();
@@ -140,7 +140,7 @@ describe('QueryQueue', () => {
       key: 'scroll',
       value: 'true',
       method: 'push',
-      options: { history: historyAdapter, pathname: '/scroll', scroll: true },
+      options: { historyAdapter, pathname: '/scroll', scroll: true },
     });
 
     sut.process();
@@ -154,13 +154,13 @@ describe('QueryQueue', () => {
       key: 'mode',
       value: 'draft',
       method: 'push',
-      options: { history: historyAdapter, pathname: '/p' },
+      options: { historyAdapter, pathname: '/p' },
     });
     sut.enqueue({
       key: 'mode',
       value: 'final',
       method: 'push',
-      options: { history: historyAdapter, pathname: '/p' },
+      options: { historyAdapter, pathname: '/p' },
     });
 
     sut.process();
@@ -174,7 +174,7 @@ describe('QueryQueue', () => {
       key: 'bar',
       value: '22',
       method: 'push',
-      options: { history: historyAdapter, pathname: '/some' },
+      options: { historyAdapter, pathname: '/some' },
     });
 
     sut.process();
@@ -186,7 +186,7 @@ describe('QueryQueue', () => {
       key: 'missing',
       value: 'path',
       method: 'push',
-      options: { history: historyAdapter },
+      options: { historyAdapter },
     });
 
     sut.process();
@@ -199,7 +199,7 @@ describe('QueryQueue', () => {
       key: 'newKey',
       value: 'ok',
       method: 'push',
-      options: { history: historyAdapter, pathname: '/same' },
+      options: { historyAdapter, pathname: '/same' },
     });
 
     sut.process();

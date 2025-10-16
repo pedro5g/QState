@@ -25,7 +25,7 @@ export class ImpQueryQueue
       shallow = false,
       scroll = false,
       pathname,
-      history: historyAdapter,
+      historyAdapter,
     } = options;
 
     if (!shallow && historyAdapter && pathname) {
