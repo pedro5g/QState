@@ -6,29 +6,23 @@ export default defineConfig({
   format: ['cjs', 'esm'],
   dts: {
     entry: 'src/index.ts',
-    resolve: true,
-    compilerOptions: {
-      tsconfig: 'tsconfig.build.json',
-    },
   },
+  tsconfig: 'tsconfig.build.json',
   splitting: false,
   sourcemap: true,
   clean: true,
   treeshake: true,
   minify: false,
-  external: ['react', 'react-dom', 'next'],
+  external: ['react', 'react-dom', 'next', '@qstate/react'],
   async onSuccess() {
     function addClientDirective(filePath: string) {
+      if (!fs.existsSync(filePath)) return;
       const content = fs.readFileSync(filePath, 'utf8');
-      const clientDirective = '"use client";\n';
-
-      if (content.startsWith(clientDirective)) return;
-
-      fs.writeFileSync(filePath, `${clientDirective}${content}`, 'utf8');
+      const directive = '"use client";\n';
+      if (content.startsWith(directive)) return;
+      fs.writeFileSync(filePath, directive + content, 'utf8');
     }
 
     ['dist/index.js', 'dist/index.cjs'].forEach(addClientDirective);
-
-    process.exit(0);
   },
 });

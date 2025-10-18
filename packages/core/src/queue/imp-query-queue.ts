@@ -1,4 +1,5 @@
 import type { QueryQueue, QueueIntention } from '../types';
+import { isNullish } from '../utils';
 import { ImpQueue } from './imp-queue';
 
 export class ImpQueryQueue
@@ -28,7 +29,7 @@ export class ImpQueryQueue
       historyAdapter,
     } = options;
 
-    if (!shallow && historyAdapter && pathname) {
+    if (!shallow && historyAdapter && !isNullish(pathname)) {
       const queryString = url.searchParams.toString();
       const fullPath = `${pathname}${queryString ? '?' + queryString : ''}`;
 

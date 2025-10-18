@@ -5,6 +5,7 @@ describe('QueryQueue', () => {
   let sut: ImpQueryQueue;
   let pushSpy: ReturnType<typeof vi.fn>;
   let replaceSpy: ReturnType<typeof vi.fn>;
+  let getPathnameSpy: ReturnType<typeof vi.fn>;
   let scrollSpy: ReturnType<typeof vi.fn>;
   let historyAdapter: HistoryAdapter;
 
@@ -26,9 +27,11 @@ describe('QueryQueue', () => {
 
     pushSpy = vi.fn();
     replaceSpy = vi.fn();
+    getPathnameSpy = vi.fn();
     historyAdapter = {
       push: pushSpy,
       replace: replaceSpy,
+      getPathname: getPathnameSpy,
     };
 
     sut = new ImpQueryQueue();

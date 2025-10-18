@@ -17,17 +17,17 @@ import type {
 } from '../types';
 import { NO_PARAM, normalizeOptions, shouldRemoveParam } from '../utils';
 
-export function useCoreQueryState<T extends undefined>(
+export function useQStateCore<T extends undefined>(
   key: string,
   defaultValue?: T
 ): UseQueryStateReturn<string, undefined>;
-export function useCoreQueryState<T>(
+export function useQStateCore<T>(
   key: string,
   defaultValue: T,
   options?: UseQueryStateOptions<T>,
   historyAdapter?: HistoryAdapter
 ): UseQueryStateReturn<T, typeof defaultValue>;
-export function useCoreQueryState<T>(
+export function useQStateCore<T>(
   key: string,
   defaultValue: T,
   options?: UseQueryStateOptions<T>,
@@ -40,7 +40,7 @@ export function useCoreQueryState<T>(
 
   const adapter = React.useMemo(
     () => historyAdapter ?? new BrowserHistoryAdapter(),
-    [historyAdapter]
+    [historyAdapter && Object.keys(historyAdapter).join(',')]
   );
 
   React.useEffect(() => {

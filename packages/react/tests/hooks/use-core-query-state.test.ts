@@ -7,7 +7,7 @@ import {
 } from '@qstate/core';
 import type { Mock } from 'vitest';
 import { shouldRemoveParam } from '../../src/utils';
-import { useCoreQueryState } from '../../src/hooks/use-core-query-state';
+import { useQStateCore } from '../../src/hooks/use-qstate-core';
 
 vi.mock('../../src/utils', async (originalImport) => {
   const actual = (await originalImport()) as any;
@@ -52,7 +52,7 @@ const expectWriteCalled = (key: string, value: any) => {
   expect(lastCall?.[1]).toBe(value);
 };
 
-describe('hook: useCoreQueryState', () => {
+describe('hook: useQStateCore', () => {
   let browserHistoryAdapter: BrowserHistoryAdapter;
   beforeEach(() => {
     vi.clearAllMocks();
@@ -67,7 +67,7 @@ describe('hook: useCoreQueryState', () => {
       (readParam as Mock).mockReturnValue(null);
       (shouldRemoveParam as unknown as Mock).mockReturnValue(false);
       (subscribeQS as Mock).mockImplementation(() => () => {});
-      const { result } = renderHook(() => useCoreQueryState('test', ''));
+      const { result } = renderHook(() => useQStateCore('test', ''));
 
       act(() => result.current[1]('test-test'));
       expect(writeParam).toHaveBeenCalledOnce();
@@ -92,7 +92,7 @@ describe('hook: useCoreQueryState', () => {
       (shouldRemoveParam as unknown as Mock).mockReturnValue(false);
       (subscribeQS as Mock).mockImplementation(() => () => {});
       const { result } = renderHook(() =>
-        useCoreQueryState('test', '', {
+        useQStateCore('test', '', {
           rateLimit: {
             mode: 'debounce',
             timeMs: 100,
@@ -132,7 +132,7 @@ describe('hook: useCoreQueryState', () => {
       (shouldRemoveParam as unknown as Mock).mockReturnValue(false);
       (subscribeQS as Mock).mockImplementation(() => () => {});
       const { result } = renderHook(() =>
-        useCoreQueryState('test', '', { history: 'replace' })
+        useQStateCore('test', '', { history: 'replace' })
       );
 
       act(() => result.current[1]('test-test'));
@@ -192,7 +192,7 @@ describe('hook: useCoreQueryState', () => {
       (shouldRemoveParam as unknown as Mock).mockReturnValue(false);
       (subscribeQS as Mock).mockImplementation(() => () => {});
       const { result } = renderHook(() =>
-        useCoreQueryState('test', '', {}, customAdapter)
+        useQStateCore('test', '', {}, customAdapter)
       );
 
       act(() => result.current[1]('test-test'));
@@ -219,7 +219,7 @@ describe('hook: useCoreQueryState', () => {
       (readParam as Mock).mockReturnValue('123');
       (subscribeQS as Mock).mockImplementation(() => () => {});
       const { result } = renderHook(() =>
-        useCoreQueryState(
+        useQStateCore(
           'custom',
           { value: 1 },
           {
@@ -237,7 +237,7 @@ describe('hook: useCoreQueryState', () => {
       (shouldRemoveParam as unknown as Mock).mockReturnValue(false);
       (subscribeQS as Mock).mockImplementation(() => () => {});
       const { result } = renderHook(() =>
-        useCoreQueryState('key', '', { encode: true })
+        useQStateCore('key', '', { encode: true })
       );
       const [, setValue] = result.current;
       act(() => setValue('a b'));
@@ -254,7 +254,7 @@ describe('hook: useCoreQueryState', () => {
       (shouldRemoveParam as unknown as Mock).mockReturnValue(false);
       (subscribeQS as Mock).mockImplementation(() => () => {});
       const { result } = renderHook(() =>
-        useCoreQueryState('key', '', { encode: false })
+        useQStateCore('key', '', { encode: false })
       );
       const [, setValue] = result.current;
       act(() => setValue('a b'));
@@ -271,7 +271,7 @@ describe('hook: useCoreQueryState', () => {
       (shouldRemoveParam as unknown as Mock).mockReturnValue(false);
       (subscribeQS as Mock).mockImplementation(() => () => {});
       const { result } = renderHook(() =>
-        useCoreQueryState('flag', '', { scroll: true })
+        useQStateCore('flag', '', { scroll: true })
       );
       const [, setValue] = result.current;
       act(() => setValue('x'));
@@ -290,7 +290,7 @@ describe('hook: useCoreQueryState', () => {
     it('should decode URI values with special characters correctly', () => {
       (readParam as Mock).mockReturnValue(encodeURIComponent('Café & pão'));
       (subscribeQS as Mock).mockImplementation(() => () => {});
-      const { result } = renderHook(() => useCoreQueryState('food', ''));
+      const { result } = renderHook(() => useQStateCore('food', ''));
       expect(result.current[0]).toBe('Café & pão');
     });
 
@@ -299,7 +299,7 @@ describe('hook: useCoreQueryState', () => {
       (subscribeQS as Mock).mockImplementation(() => () => {});
       const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
       const { result } = renderHook(() =>
-        useCoreQueryState('broken', 'ok', {
+        useQStateCore('broken', 'ok', {
           parse: () => {
             throw new Error('Invalid parse');
           },
@@ -319,7 +319,7 @@ describe('hook: useCoreQueryState', () => {
     it('should support updating arrays directly', () => {
       (readParam as Mock).mockReturnValue(null);
       (subscribeQS as Mock).mockImplementation(() => () => {});
-      const { result } = renderHook(() => useCoreQueryState('list', [1, 2, 3]));
+      const { result } = renderHook(() => useQStateCore('list', [1, 2, 3]));
       const [, setValue] = result.current;
       act(() => {
         setValue([4, 5]);
@@ -336,7 +336,7 @@ describe('hook: useCoreQueryState', () => {
       (readParam as Mock).mockReturnValue(null);
       (subscribeQS as Mock).mockImplementation(() => () => {});
       const { result } = renderHook(() =>
-        useCoreQueryState('profile', { info: { name: 'John', age: 22 } })
+        useQStateCore('profile', { info: { name: 'John', age: 22 } })
       );
       const [, setValue] = result.current;
       act(() => {
@@ -356,7 +356,7 @@ describe('hook: useCoreQueryState', () => {
       (readParam as Mock).mockReturnValue('123');
       (subscribeQS as Mock).mockImplementation(() => () => {});
       (shouldRemoveParam as unknown as Mock).mockReturnValue(false);
-      const { result } = renderHook(() => useCoreQueryState('id', 123));
+      const { result } = renderHook(() => useQStateCore('id', 123));
       const [_, setValue] = result.current;
       act(() => {
         setValue(null);
@@ -374,28 +374,28 @@ describe('hook: useCoreQueryState', () => {
     it('should returns defaultValue if query param is missing, "null" if no defaultValue was be passed', () => {
       (readParam as Mock).mockReturnValue(null);
       (subscribeQS as Mock).mockImplementation(() => () => {});
-      const { result } = renderHook(() => useCoreQueryState('foo'));
+      const { result } = renderHook(() => useQStateCore('foo'));
       expect(result.current[0]).toBeNull();
     });
 
     it('should returns defaultValue if query param is missing', () => {
       (readParam as Mock).mockReturnValue(null);
       (subscribeQS as Mock).mockImplementation(() => () => {});
-      const { result } = renderHook(() => useCoreQueryState('foo', 'bar'));
+      const { result } = renderHook(() => useQStateCore('foo', 'bar'));
       expect(result.current[0]).toBe('bar');
     });
 
     it('should parses string value correctly', () => {
       (readParam as Mock).mockReturnValue('123');
       (subscribeQS as Mock).mockImplementation(() => () => {});
-      const { result } = renderHook(() => useCoreQueryState('foo', 0));
+      const { result } = renderHook(() => useQStateCore('foo', 0));
       expect(result.current[0]).toBe(123);
     });
 
     it('should decodes URI safely', () => {
       (readParam as Mock).mockReturnValue(encodeURIComponent('Pelé'));
       (subscribeQS as Mock).mockImplementation(() => () => {});
-      const { result } = renderHook(() => useCoreQueryState('name', ''));
+      const { result } = renderHook(() => useQStateCore('name', ''));
       expect(result.current[0]).toBe('Pelé');
     });
 
@@ -403,7 +403,7 @@ describe('hook: useCoreQueryState', () => {
       (readParam as Mock).mockReturnValue('%E0%A4%A');
       (subscribeQS as Mock).mockImplementation(() => () => {});
       const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-      const { result } = renderHook(() => useCoreQueryState('foo', 'fallback'));
+      const { result } = renderHook(() => useQStateCore('foo', 'fallback'));
       expect(result.current[0]).toBe('fallback');
       expect(warnSpy).toHaveBeenCalled();
     });
@@ -414,7 +414,7 @@ describe('hook: useCoreQueryState', () => {
       (readParam as Mock).mockReturnValue(null);
       (shouldRemoveParam as unknown as Mock).mockReturnValue(false);
       (subscribeQS as Mock).mockImplementation(() => () => {});
-      const { result } = renderHook(() => useCoreQueryState('page', 1));
+      const { result } = renderHook(() => useQStateCore('page', 1));
 
       act(() => {
         result.current[1](2);
@@ -427,7 +427,7 @@ describe('hook: useCoreQueryState', () => {
       (shouldRemoveParam as unknown as Mock).mockReturnValue(false);
       (subscribeQS as Mock).mockImplementation(() => () => {});
       const { result } = renderHook(() =>
-        useCoreQueryState('count', 5, { removeIfDefault: false })
+        useQStateCore('count', 5, { removeIfDefault: false })
       );
 
       act(() => result.current[1](5));
@@ -438,7 +438,7 @@ describe('hook: useCoreQueryState', () => {
       (shouldRemoveParam as unknown as Mock).mockReturnValue(true);
       (subscribeQS as Mock).mockImplementation(() => () => {});
       const { result } = renderHook(() =>
-        useCoreQueryState('count', 5, { removeIfDefault: true })
+        useQStateCore('count', 5, { removeIfDefault: true })
       );
 
       act(() => result.current[1](5));
@@ -449,7 +449,7 @@ describe('hook: useCoreQueryState', () => {
       (readParam as Mock).mockReturnValue('5');
       (shouldRemoveParam as unknown as Mock).mockReturnValue(true);
       (subscribeQS as Mock).mockImplementation(() => () => {});
-      const { result } = renderHook(() => useCoreQueryState('count', 5));
+      const { result } = renderHook(() => useQStateCore('count', 5));
 
       act(() => result.current[1](5));
       expect(writeParam).toHaveBeenCalled();
@@ -459,7 +459,7 @@ describe('hook: useCoreQueryState', () => {
       (readParam as Mock).mockReturnValue('10');
       (shouldRemoveParam as unknown as Mock).mockReturnValue(false);
       (subscribeQS as Mock).mockImplementation(() => () => {});
-      const { result } = renderHook(() => useCoreQueryState('id', 1));
+      const { result } = renderHook(() => useQStateCore('id', 1));
 
       act(() => result.current[1](null));
       expectWriteCalled('id', null);
@@ -469,7 +469,7 @@ describe('hook: useCoreQueryState', () => {
       (readParam as Mock).mockReturnValue('10');
       (shouldRemoveParam as unknown as Mock).mockReturnValue(false);
       (subscribeQS as Mock).mockImplementation(() => () => {});
-      const { result } = renderHook(() => useCoreQueryState('token', 'x'));
+      const { result } = renderHook(() => useQStateCore('token', 'x'));
 
       act(() => result.current[1](() => null));
       expectWriteCalled('token', null);
@@ -479,7 +479,7 @@ describe('hook: useCoreQueryState', () => {
       (readParam as Mock).mockReturnValue('1');
       (shouldRemoveParam as unknown as Mock).mockReturnValue(true);
       (subscribeQS as Mock).mockImplementation(() => () => {});
-      const { result } = renderHook(() => useCoreQueryState('num', 1));
+      const { result } = renderHook(() => useQStateCore('num', 1));
 
       act(() => {
         result.current[1](1);
@@ -491,7 +491,7 @@ describe('hook: useCoreQueryState', () => {
       (readParam as Mock).mockReturnValue('1');
       (shouldRemoveParam as unknown as Mock).mockReturnValue(false);
       (subscribeQS as Mock).mockImplementation(() => () => {});
-      const { result } = renderHook(() => useCoreQueryState('count', 1));
+      const { result } = renderHook(() => useQStateCore('count', 1));
 
       act(() => result.current[1]((prev) => prev + 1));
       expectWriteCalled('count', '2');
@@ -504,7 +504,7 @@ describe('hook: useCoreQueryState', () => {
       });
       (subscribeQS as Mock).mockImplementation(() => () => {});
       const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-      const { result } = renderHook(() => useCoreQueryState('x', 1));
+      const { result } = renderHook(() => useQStateCore('x', 1));
 
       act(() =>
         result.current[1](() => {
@@ -522,7 +522,7 @@ describe('hook: useCoreQueryState', () => {
   describe('reactivity', () => {
     it('reacts to changes via subscription', () => {
       const mock = createSubscribeMock('a');
-      const { result } = renderHook(() => useCoreQueryState('token', ''));
+      const { result } = renderHook(() => useQStateCore('token', ''));
 
       expect(result.current[0]).toBe('a');
       (readParam as Mock).mockReturnValue('b');
@@ -542,7 +542,7 @@ describe('hook: useCoreQueryState', () => {
       );
       (subscribeQS as Mock).mockImplementation(() => () => {});
 
-      const { result } = renderHook(() => useCoreQueryState('key'));
+      const { result } = renderHook(() => useQStateCore('key'));
 
       expect(result.current[0]).toBeNull();
 
@@ -567,7 +567,7 @@ describe('hook: useCoreQueryState', () => {
       (readParam as Mock).mockReturnValue('1');
       (shouldRemoveParam as unknown as Mock).mockReturnValue(false);
       (subscribeQS as Mock).mockImplementation(() => () => {});
-      const { result } = renderHook(() => useCoreQueryState('rapid', 1));
+      const { result } = renderHook(() => useQStateCore('rapid', 1));
       const [, setValue] = result.current;
 
       act(() => {
@@ -585,7 +585,7 @@ describe('hook: useCoreQueryState', () => {
       (readParam as Mock).mockImplementation(() => currentValue);
       (shouldRemoveParam as unknown as Mock).mockReturnValue(true);
       (subscribeQS as Mock).mockImplementation(() => () => {});
-      const { result } = renderHook(() => useCoreQueryState('num', 1));
+      const { result } = renderHook(() => useQStateCore('num', 1));
       const [, setValue] = result.current;
 
       act(() => {
@@ -601,7 +601,7 @@ describe('hook: useCoreQueryState', () => {
       const unsubscribe = vi.fn();
       (readParam as Mock).mockReturnValue('abc');
       (subscribeQS as Mock).mockImplementation(() => unsubscribe);
-      const { unmount } = renderHook(() => useCoreQueryState('x', ''));
+      const { unmount } = renderHook(() => useQStateCore('x', ''));
       unmount();
       expect(unsubscribe).toHaveBeenCalled();
     });
@@ -616,7 +616,7 @@ describe('hook: useCoreQueryState', () => {
       const options = { history: 'push' as const };
 
       const { result, rerender } = renderHook(() =>
-        useCoreQueryState('counter', 1, options, adapter)
+        useQStateCore('counter', 1, options, adapter)
       );
 
       const firstSetter = result.current[1];
@@ -631,7 +631,7 @@ describe('hook: useCoreQueryState', () => {
       const mock = createSubscribeMock('5');
       (shouldRemoveParam as unknown as Mock).mockReturnValue(false);
 
-      const { result } = renderHook(() => useCoreQueryState('count', 0));
+      const { result } = renderHook(() => useQStateCore('count', 0));
 
       expect(result.current[0]).toBe(5);
 
@@ -657,7 +657,7 @@ describe('hook: useCoreQueryState', () => {
       (subscribeQS as Mock).mockImplementation(() => () => {});
 
       const { result, rerender } = renderHook(() =>
-        useCoreQueryState('test', 1, stableConfig)
+        useQStateCore('test', 1, stableConfig)
       );
 
       const firstSetter = result.current[1];
@@ -679,7 +679,7 @@ describe('hook: useCoreQueryState', () => {
       (subscribeQS as Mock).mockImplementation(() => () => {});
 
       const { result } = renderHook(() =>
-        useCoreQueryState('test', 1, stableConfig)
+        useQStateCore('test', 1, stableConfig)
       );
       const firstSetter = result.current[1];
 
@@ -699,7 +699,7 @@ describe('hook: useCoreQueryState', () => {
       (shouldRemoveParam as unknown as Mock).mockReturnValue(false);
       (subscribeQS as Mock).mockImplementation(() => () => {});
 
-      const { result } = renderHook(() => useCoreQueryState('val', 5));
+      const { result } = renderHook(() => useQStateCore('val', 5));
 
       act(() => {
         result.current[1]((prev) => prev);
@@ -712,7 +712,7 @@ describe('hook: useCoreQueryState', () => {
       const mock = createSubscribeMock('10');
       (shouldRemoveParam as unknown as Mock).mockReturnValue(false);
 
-      const { result } = renderHook(() => useCoreQueryState('num', 0));
+      const { result } = renderHook(() => useQStateCore('num', 0));
 
       expect(result.current[0]).toBe(10);
 
@@ -739,9 +739,7 @@ describe('hook: useCoreQueryState', () => {
       (shouldRemoveParam as unknown as Mock).mockReturnValue(false);
       (subscribeQS as Mock).mockImplementation(() => () => {});
 
-      const { result } = renderHook(() =>
-        useCoreQueryState('data', { count: 0 })
-      );
+      const { result } = renderHook(() => useQStateCore('data', { count: 0 }));
 
       expect(result.current[0]).toEqual({ count: 5 });
 
@@ -756,7 +754,7 @@ describe('hook: useCoreQueryState', () => {
   describe('synchronization edge cases', () => {
     it('should handle rapid external URL changes correctly', () => {
       const mock = createSubscribeMock('a');
-      const { result } = renderHook(() => useCoreQueryState('token', ''));
+      const { result } = renderHook(() => useQStateCore('token', ''));
 
       expect(result.current[0]).toBe('a');
 
@@ -777,7 +775,7 @@ describe('hook: useCoreQueryState', () => {
       const mock = createSubscribeMock('5');
       (shouldRemoveParam as unknown as Mock).mockReturnValue(false);
 
-      const { result } = renderHook(() => useCoreQueryState('count', 0));
+      const { result } = renderHook(() => useQStateCore('count', 0));
 
       expect(result.current[0]).toBe(5);
 
@@ -798,9 +796,7 @@ describe('hook: useCoreQueryState', () => {
       (readParam as Mock).mockReturnValue('test');
       (subscribeQS as Mock).mockImplementation(() => () => {});
 
-      const { result, unmount } = renderHook(() =>
-        useCoreQueryState('key', '')
-      );
+      const { result, unmount } = renderHook(() => useQStateCore('key', ''));
 
       const setter = result.current[1];
 
@@ -820,7 +816,7 @@ describe('hook: useCoreQueryState', () => {
 
       let config = { encode: false };
       const { result, rerender } = renderHook(
-        ({ opts }) => useCoreQueryState('key', '', opts),
+        ({ opts }) => useQStateCore('key', '', opts),
         { initialProps: { opts: config } }
       );
 

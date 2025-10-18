@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { resolveArgs } from '../utils';
-import { useCoreQueryState } from './use-core-query-state';
+import { useQStateCore } from './use-qstate-core';
 import { type HistoryAdapter, type Optional } from '@qstate/core';
 import type {
   ParsedFromParser,
@@ -30,7 +30,7 @@ import type {
  * @example
  * **Basic usage - No default (string | null)**
  * ```tsx
- * const [search, setSearch] = useQueryState('search');
+ * const [search, setSearch] = useQState('search');
  * // search: string | null
  * // URL: ?search=hello → search = 'hello'
  * // URL: / → search = null
@@ -39,12 +39,12 @@ import type {
  * @example
  * **With default value (typed)**
  * ```tsx
- * const [search, setSearch] = useQueryState('search', '');
+ * const [search, setSearch] = useQState('search', '');
  * // search: string (never null)
  * // URL: ?search=hello → search = 'hello'
  * // URL: / → search = ''
  *
- * const [page, setPage] = useQueryState('page', 1);
+ * const [page, setPage] = useQState('page', 1);
  * // page: number
  * // URL: ?page=5 → page = 5
  * // URL: / → page = 1
@@ -53,7 +53,7 @@ import type {
  * @example
  * **With options**
  * ```tsx
- * const [search, setSearch] = useQueryState('search', '', {
+ * const [search, setSearch] = useQState('search', '', {
  *   history: 'push',      // Use push instead of replace
  *   shallow: false,       // Trigger re-render
  *   scroll: true,         // Scroll to top on change
@@ -67,11 +67,11 @@ import type {
  * import { qsParserString } from '@qstate/core';
  *
  * // Without default
- * const [search, setSearch] = useQueryState('search', qsParserString);
+ * const [search, setSearch] = useQState('search', qsParserString);
  * // search: string | null
  *
  * // With default
- * const [search, setSearch] = useQueryState(
+ * const [search, setSearch] = useQState(
  *   'search',
  *   qsParserString.setDefault('hello-')
  * );
@@ -83,7 +83,7 @@ import type {
  * ```tsx
  * import { qsParserStringLiteral } from '@qstate/core';
  *
- * const [values, setValues] = useQueryState({
+ * const [values, setValues] = useQState({
  *   page: 1,
  *   status: qsParserStringLiteral(['active', 'disabled']).setDefault('active'),
  *   profile: {
@@ -107,7 +107,7 @@ import type {
  * @example
  * **Setter function usage**
  * ```tsx
- * const [value, setValue] = useQueryState(
+ * const [value, setValue] = useQState(
  *   'search',
  *   qsParserString.setDefault('hello-')
  * );
@@ -136,7 +136,7 @@ import type {
  * @example
  * **Advanced: Custom parser**
  * ```tsx
- * const [user, setUser] = useQueryState('user', {
+ * const [user, setUser] = useQState('user', {
  *   defaultValue: { id: 0, name: 'Guest' },
  *   parse: (str) => JSON.parse(str),
  *   serialize: (obj) => JSON.stringify(obj),
@@ -152,7 +152,7 @@ import type {
  * @template P - Parser configuration type
  
  */
-export interface UseQueryState {
+export interface UseQState {
   /**
    * Manages multiple query parameters at once.
    *
@@ -164,7 +164,7 @@ export interface UseQueryState {
    *
    * @example
    * ```tsx
-   * const [{ page, status }, { page: setPage, status: setStatus }] = useQueryState({
+   * const [{ page, status }, { page: setPage, status: setStatus }] = useQState({
    *   page: 1,                    // Primitive: number with default 1
    *   status: {                   // Parser config
    *     defaultValue: 'active',
@@ -200,16 +200,16 @@ export interface UseQueryState {
    * import { qsParserString, qsParserNumber } from '@qstate/core';
    *
    * // Without default → type: string | null
-   * const [search, setSearch] = useQueryState('search', qsParserString);
+   * const [search, setSearch] = useQState('search', qsParserString);
    *
    * // With default → type: string
-   * const [search, setSearch] = useQueryState(
+   * const [search, setSearch] = useQState(
    *   'search',
    *   qsParserString.setDefault('hello-')
    * );
    *
    * // Literal types
-   * const [status, setStatus] = useQueryState(
+   * const [status, setStatus] = useQState(
    *   'status',
    *   qsParserStringLiteral(['active', 'disabled']).setDefault('active')
    * );
@@ -235,15 +235,15 @@ export interface UseQueryState {
    * @example
    * ```tsx
    * // String
-   * const [search, setSearch] = useQueryState('search', '');
+   * const [search, setSearch] = useQState('search', '');
    * // type: string
    *
    * // Number
-   * const [page, setPage] = useQueryState('page', 1);
+   * const [page, setPage] = useQState('page', 1);
    * // type: number
    *
    * // With options
-   * const [page, setPage] = useQueryState('page', 1, {
+   * const [page, setPage] = useQState('page', 1, {
    *   history: 'push',
    *   shallow: false
    * });
@@ -275,7 +275,7 @@ export interface UseQueryState {
    *
    * @example
    * ```tsx
-   * const [search, setSearch] = useQueryState('search');
+   * const [search, setSearch] = useQState('search');
    * // type: string | null
    *
    * // URL: ?search=hello → search = 'hello'
@@ -289,26 +289,26 @@ export interface UseQueryState {
 }
 
 /**
- * Creates a configured `useQueryState` hook with a custom history adapter.
+ * Creates a configured `useQState` hook with a custom history adapter.
  *
  * This factory function allows you to integrate with different routing solutions
  * (Next.js, React Router, etc.) by providing a custom adapter that handles
  * URL updates.
  *
  * @param historyAdapter - Adapter that manages URL state changes
- * @returns Configured useQueryState hook ready to use
+ * @returns Configured useQState hook ready to use
  *
  * @example
  * **Browser (default)**
  * ```tsx
  * import { BrowserHistoryAdapter } from '@qstate/core';
  *
- * export const useQueryState = createUseQueryState(
+ * export const useQState = createUseQueryState(
  *   new BrowserHistoryAdapter()
  * );
  *
  * function Component() {
- *   const [page, setPage] = useQueryState('page', 1);
+ *   const [page, setPage] = useQState('page', 1);
  *   return <div>Page: {page}</div>;
  * }
  * ```
@@ -318,7 +318,7 @@ export interface UseQueryState {
  * ```tsx
  * import { NextHistoryAdapter } from '@qstate/next';
  *
- * export const useQueryState = createUseQueryState(
+ * export const useQState = createUseQueryState(
  *   new NextHistoryAdapter()
  * );
  * ```
@@ -328,7 +328,7 @@ export interface UseQueryState {
  * ```tsx
  * import { ReactRouterAdapter } from '@qstate/react-router';
  *
- * export const useQueryState = createUseQueryState(
+ * export const useQState = createUseQueryState(
  *   new ReactRouterAdapter()
  * );
  * ```
@@ -347,14 +347,12 @@ export interface UseQueryState {
  *   }
  * };
  *
- * export const useQueryState = createUseQueryState(customAdapter);
+ * export const useQState = createUseQueryState(customAdapter);
  * ```
  */
 
-export const createUseQueryState = (
-  historyAdapter: HistoryAdapter
-): UseQueryState => {
-  const useQueryState = ((...args: any[]) => {
+export const createUseQState = (historyAdapter: HistoryAdapter): UseQState => {
+  const useQState = ((...args: any[]) => {
     const result = resolveArgs(args as unknown as IArguments);
 
     if (result.isObject) {
@@ -367,7 +365,7 @@ export const createUseQueryState = (
       const setters: Record<string, any> = {};
 
       for (const { key, defaultValue, config } of entries) {
-        const [value, setter] = useCoreQueryState(
+        const [value, setter] = useQStateCore(
           key,
           defaultValue,
           config,
@@ -381,8 +379,8 @@ export const createUseQueryState = (
     }
 
     const { key, defaultValue, config } = result;
-    return useCoreQueryState(key, defaultValue, config, historyAdapter);
-  }) as UseQueryState;
+    return useQStateCore(key, defaultValue, config, historyAdapter);
+  }) as UseQState;
 
-  return useQueryState;
+  return useQState;
 };

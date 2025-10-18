@@ -1,15 +1,15 @@
 import { renderHook } from '@testing-library/react';
-import { createUseQueryState } from '../../src/hooks/create-use-query-state';
+import { createUseQState } from '../../src/hooks/create-use-qstate';
 import { resolveArgs } from '../../src/utils';
-import { useCoreQueryState } from '../../src/hooks/use-core-query-state';
+import { useQStateCore } from '../../src/hooks/use-qstate-core';
 import { BrowserHistoryAdapter } from '@qstate/core';
 
 vi.mock('../../src/utils', () => ({
   resolveArgs: vi.fn(),
 }));
 
-vi.mock('../../src/hooks/use-core-query-state', () => ({
-  useCoreQueryState: vi.fn(),
+vi.mock('../../src/hooks/use-qstate-core', () => ({
+  useQStateCore: vi.fn(),
 }));
 
 vi.mock('@qstate/core', () => ({
@@ -28,7 +28,7 @@ describe('useQueryState hook', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useCoreQueryState as any).mockReturnValue([mockValue, mockSet]);
+    (useQStateCore as any).mockReturnValue([mockValue, mockSet]);
   });
 
   describe('baseline', () => {
@@ -40,15 +40,10 @@ describe('useQueryState hook', () => {
         config: {},
       });
 
-      const useQueryState = createUseQueryState(mockAdapter);
+      const useQueryState = createUseQState(mockAdapter);
       const { result } = renderHook(() => useQueryState('page', '1'));
 
-      expect(useCoreQueryState).toHaveBeenCalledWith(
-        'page',
-        '1',
-        {},
-        mockAdapter
-      );
+      expect(useQStateCore).toHaveBeenCalledWith('page', '1', {}, mockAdapter);
       expect(result.current[0]).toBe(mockValue);
       expect(result.current[1]).toBe(mockSet);
     });
@@ -61,7 +56,7 @@ describe('useQueryState hook', () => {
         config: { parse: vi.fn() },
       });
 
-      const useQueryState = createUseQueryState(mockAdapter);
+      const useQueryState = createUseQState(mockAdapter);
       const { result } = renderHook(() =>
         useQueryState('status', {
           defaultValue: 'active',
@@ -69,7 +64,7 @@ describe('useQueryState hook', () => {
         })
       );
 
-      expect(useCoreQueryState).toHaveBeenCalledWith(
+      expect(useQStateCore).toHaveBeenCalledWith(
         'status',
         'active',
         { parse: expect.any(Function) },
@@ -87,7 +82,7 @@ describe('useQueryState hook', () => {
         },
       });
 
-      const useQueryState = createUseQueryState(mockAdapter);
+      const useQueryState = createUseQState(mockAdapter);
       const { result } = renderHook(() =>
         useQueryState({
           page: 1,
@@ -95,15 +90,15 @@ describe('useQueryState hook', () => {
         })
       );
 
-      expect(useCoreQueryState).toHaveBeenCalledTimes(2);
-      expect(useCoreQueryState).toHaveBeenNthCalledWith(
+      expect(useQStateCore).toHaveBeenCalledTimes(2);
+      expect(useQStateCore).toHaveBeenNthCalledWith(
         1,
         'page',
         1,
         expect.any(Object),
         expect.any(Object)
       );
-      expect(useCoreQueryState).toHaveBeenNthCalledWith(
+      expect(useQStateCore).toHaveBeenNthCalledWith(
         2,
         'status',
         'active',
@@ -128,10 +123,10 @@ describe('useQueryState hook', () => {
         config: mockParser,
       });
 
-      const useQueryState = createUseQueryState(mockAdapter);
+      const useQueryState = createUseQState(mockAdapter);
       const { result } = renderHook(() => useQueryState('flag', mockParser));
 
-      expect(useCoreQueryState).toHaveBeenCalledWith(
+      expect(useQStateCore).toHaveBeenCalledWith(
         'flag',
         false,
         mockParser,
@@ -148,10 +143,10 @@ describe('useQueryState hook', () => {
         *[Symbol.iterator]() {},
       });
 
-      const useQueryState = createUseQueryState(mockAdapter);
+      const useQueryState = createUseQState(mockAdapter);
       const { result } = renderHook(() => useQueryState({}));
 
-      expect(useCoreQueryState).not.toHaveBeenCalled();
+      expect(useQStateCore).not.toHaveBeenCalled();
       expect(result.current[0]).toEqual({});
       expect(result.current[1]).toEqual({});
     });
@@ -164,10 +159,10 @@ describe('useQueryState hook', () => {
         config: {},
       });
 
-      const useQueryState = createUseQueryState(mockAdapter);
+      const useQueryState = createUseQState(mockAdapter);
       const { result } = renderHook(() => useQueryState('search'));
 
-      expect(useCoreQueryState).toHaveBeenCalledWith(
+      expect(useQStateCore).toHaveBeenCalledWith(
         'search',
         undefined,
         {},
@@ -184,10 +179,10 @@ describe('useQueryState hook', () => {
         config: {},
       });
 
-      const useQueryState = createUseQueryState(mockAdapter);
+      const useQueryState = createUseQState(mockAdapter);
       renderHook(() => useQueryState('filter', null));
 
-      expect(useCoreQueryState).toHaveBeenCalledWith(
+      expect(useQStateCore).toHaveBeenCalledWith(
         'filter',
         null,
         {},
@@ -208,10 +203,10 @@ describe('useQueryState hook', () => {
         config: {},
       });
 
-      const useQueryState = createUseQueryState(mockAdapter);
+      const useQueryState = createUseQState(mockAdapter);
       renderHook(() => useQueryState('state', complexDefault));
 
-      expect(useCoreQueryState).toHaveBeenCalledWith(
+      expect(useQStateCore).toHaveBeenCalledWith(
         'state',
         complexDefault,
         {},
@@ -227,10 +222,10 @@ describe('useQueryState hook', () => {
         config: {},
       });
 
-      const useQueryState = createUseQueryState(mockAdapter);
+      const useQueryState = createUseQState(mockAdapter);
       renderHook(() => useQueryState('tags', ['react', 'typescript']));
 
-      expect(useCoreQueryState).toHaveBeenCalledWith(
+      expect(useQStateCore).toHaveBeenCalledWith(
         'tags',
         ['react', 'typescript'],
         {},
@@ -244,7 +239,7 @@ describe('useQueryState hook', () => {
       const mockSet1 = vi.fn();
       const mockSet2 = vi.fn();
 
-      (useCoreQueryState as any)
+      (useQStateCore as any)
         .mockReturnValueOnce(['value1', mockSet1])
         .mockReturnValueOnce(['value2', mockSet2]);
 
@@ -256,7 +251,7 @@ describe('useQueryState hook', () => {
         },
       });
 
-      const useQueryState = createUseQueryState(mockAdapter);
+      const useQueryState = createUseQState(mockAdapter);
       const { result } = renderHook(() =>
         useQueryState({
           key1: 'default1',
@@ -285,7 +280,7 @@ describe('useQueryState hook', () => {
         },
       });
 
-      const useQueryState = createUseQueryState(mockAdapter);
+      const useQueryState = createUseQState(mockAdapter);
       renderHook(() =>
         useQueryState({
           page: 1,
@@ -296,15 +291,15 @@ describe('useQueryState hook', () => {
         })
       );
 
-      expect(useCoreQueryState).toHaveBeenCalledTimes(2);
-      expect(useCoreQueryState).toHaveBeenNthCalledWith(
+      expect(useQStateCore).toHaveBeenCalledTimes(2);
+      expect(useQStateCore).toHaveBeenNthCalledWith(
         1,
         'page',
         1,
         {},
         mockAdapter
       );
-      expect(useCoreQueryState).toHaveBeenNthCalledWith(
+      expect(useQStateCore).toHaveBeenNthCalledWith(
         2,
         'status',
         'active',
@@ -327,10 +322,10 @@ describe('useQueryState hook', () => {
 
       const config = Object.fromEntries(keys.map((k) => [k, `value${k}`]));
 
-      const useQueryState = createUseQueryState(mockAdapter);
+      const useQueryState = createUseQState(mockAdapter);
       const { result } = renderHook(() => useQueryState(config));
 
-      expect(useCoreQueryState).toHaveBeenCalledTimes(20);
+      expect(useQStateCore).toHaveBeenCalledTimes(20);
 
       const [values, setters] = result.current;
       keys.forEach((key) => {
@@ -352,7 +347,7 @@ describe('useQueryState hook', () => {
         },
       });
 
-      const useQueryState = createUseQueryState(mockAdapter);
+      const useQueryState = createUseQState(mockAdapter);
       const { rerender } = renderHook(() => useQueryState({ page: 1 }));
 
       expect(iteratorCallCount).toBe(1);
@@ -364,7 +359,7 @@ describe('useQueryState hook', () => {
   });
 
   describe('adapter usage', () => {
-    it('should pass custom adapter to all useCoreQueryState calls', () => {
+    it('should pass custom adapter to all useQStateCore calls', () => {
       const customAdapter = {
         push: vi.fn(),
         replace: vi.fn(),
@@ -378,21 +373,11 @@ describe('useQueryState hook', () => {
         },
       });
 
-      const useQueryState = createUseQueryState(customAdapter as any);
+      const useQueryState = createUseQState(customAdapter as any);
       renderHook(() => useQueryState({ key1: 1, key2: 2 }));
 
-      expect(useCoreQueryState).toHaveBeenCalledWith(
-        'key1',
-        1,
-        {},
-        customAdapter
-      );
-      expect(useCoreQueryState).toHaveBeenCalledWith(
-        'key2',
-        2,
-        {},
-        customAdapter
-      );
+      expect(useQStateCore).toHaveBeenCalledWith('key1', 1, {}, customAdapter);
+      expect(useQStateCore).toHaveBeenCalledWith('key2', 2, {}, customAdapter);
     });
 
     it('should work with different adapter instances', () => {
@@ -406,11 +391,11 @@ describe('useQueryState hook', () => {
         config: {},
       });
 
-      const useQueryState1 = createUseQueryState(adapter1);
-      const useQueryState2 = createUseQueryState(adapter2);
+      const useQueryState1 = createUseQState(adapter1);
+      const useQueryState2 = createUseQState(adapter2);
 
       renderHook(() => useQueryState1('test', 'value'));
-      expect(useCoreQueryState).toHaveBeenLastCalledWith(
+      expect(useQStateCore).toHaveBeenLastCalledWith(
         'test',
         'value',
         {},
@@ -418,7 +403,7 @@ describe('useQueryState hook', () => {
       );
 
       renderHook(() => useQueryState2('test', 'value'));
-      expect(useCoreQueryState).toHaveBeenLastCalledWith(
+      expect(useQStateCore).toHaveBeenLastCalledWith(
         'test',
         'value',
         {},
@@ -436,10 +421,10 @@ describe('useQueryState hook', () => {
         config: {},
       });
 
-      const useQueryState = createUseQueryState(mockAdapter);
+      const useQueryState = createUseQState(mockAdapter);
       renderHook(() => useQueryState('enabled', true));
 
-      expect(useCoreQueryState).toHaveBeenCalledWith(
+      expect(useQStateCore).toHaveBeenCalledWith(
         'enabled',
         true,
         {},
@@ -455,15 +440,10 @@ describe('useQueryState hook', () => {
         config: {},
       });
 
-      const useQueryState = createUseQueryState(mockAdapter);
+      const useQueryState = createUseQState(mockAdapter);
       renderHook(() => useQueryState('count', 42));
 
-      expect(useCoreQueryState).toHaveBeenCalledWith(
-        'count',
-        42,
-        {},
-        mockAdapter
-      );
+      expect(useQStateCore).toHaveBeenCalledWith('count', 42, {}, mockAdapter);
     });
 
     it('should handle date defaults', () => {
@@ -476,20 +456,15 @@ describe('useQueryState hook', () => {
         config: {},
       });
 
-      const useQueryState = createUseQueryState(mockAdapter);
+      const useQueryState = createUseQState(mockAdapter);
       renderHook(() => useQueryState('date', date));
 
-      expect(useCoreQueryState).toHaveBeenCalledWith(
-        'date',
-        date,
-        {},
-        mockAdapter
-      );
+      expect(useQStateCore).toHaveBeenCalledWith('date', date, {}, mockAdapter);
     });
   });
 
   describe('config options passthrough', () => {
-    it('should pass all config options to useCoreQueryState', () => {
+    it('should pass all config options to useQStateCore', () => {
       const fullConfig = {
         parse: vi.fn(),
         serialize: vi.fn(),
@@ -508,10 +483,10 @@ describe('useQueryState hook', () => {
         config: fullConfig,
       });
 
-      const useQueryState = createUseQueryState(mockAdapter);
+      const useQueryState = createUseQState(mockAdapter);
       renderHook(() => useQueryState('test', 'value', fullConfig));
 
-      expect(useCoreQueryState).toHaveBeenCalledWith(
+      expect(useQStateCore).toHaveBeenCalledWith(
         'test',
         'value',
         fullConfig,
