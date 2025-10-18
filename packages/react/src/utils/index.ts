@@ -38,6 +38,22 @@ export const shouldRemoveParam = <T>(
   );
 };
 
+export const isLikelyConfigObject = (obj: Record<string, any>) => {
+  if (!deepTypeCheck(obj, 'object')) return false;
+  const CONFIG_KEYS = [
+    'defaultValue',
+    'parse',
+    'serialize',
+    'equals',
+    'history',
+    'scroll',
+    'rateLimit',
+    'shallow',
+    'encode',
+  ];
+  return Object.keys(obj).some((key) => CONFIG_KEYS.includes(key));
+};
+
 /**
  * resolver useQueryState args - recibes all hook args
  * and format its
@@ -68,15 +84,13 @@ export function resolveArgs<T>(args: IArguments): ReturnTypeResolveArgs<T> {
         const items = Object.entries<UseQueryStateOptionsObject<T>>(args[0]);
 
         for (const [key, item] of items) {
-          if (deepTypeCheck(item, 'object')) {
+          if (deepTypeCheck(item, 'object') && isLikelyConfigObject(item)) {
             const { defaultValue, ...rest } = item;
 
             yield {
               key,
               defaultValue,
-              config: {
-                ...rest,
-              },
+              config: rest,
             };
           } else {
             yield {
@@ -92,7 +106,8 @@ export function resolveArgs<T>(args: IArguments): ReturnTypeResolveArgs<T> {
   if (
     args.length === 2 &&
     deepTypeCheck(args[0], 'string') &&
-    deepTypeCheck(args[1], 'object')
+    deepTypeCheck(args[1], 'object') &&
+    isLikelyConfigObject(args[1])
   ) {
     const key = args[0];
     const { defaultValue, ...rest } = args[1] as UseQueryStateOptionsObject<T>;
@@ -101,27 +116,21 @@ export function resolveArgs<T>(args: IArguments): ReturnTypeResolveArgs<T> {
       isObject: false,
       key,
       defaultValue: defaultValue,
-      config: {
-        ...rest,
-      },
+      config: rest,
     };
   }
 
-  if (
-    args.length === 2 &&
-    deepTypeCheck(args[0], 'string') &&
-    !deepTypeCheck(args[1], 'object')
-  ) {
+  if (args.length === 2 && deepTypeCheck(args[0], 'string')) {
     const key = args[0];
     const defaultValue = args[1];
-
     return {
       isObject: false,
       key,
-      defaultValue: String(defaultValue) as T,
+      defaultValue: defaultValue as T,
       config: {},
     };
   }
+
   const key = args[0];
   const defaultValue: T = args[1];
   const config = args[2] as UseQueryStateOptions<T>;

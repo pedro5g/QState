@@ -107,7 +107,7 @@ describe('utils: resolveArgs', () => {
     const result = resolveArgs<number>(args) as any;
     expect(result.isObject).toBe(false);
     expect(result.key).toBe('page');
-    expect(result.defaultValue).toBe('1');
+    expect(result.defaultValue).toBe(1);
   });
 
   it('should handle key + defaultValue + config', () => {

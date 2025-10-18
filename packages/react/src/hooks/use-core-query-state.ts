@@ -14,7 +14,6 @@ import type {
   UseQueryStateReturn,
   StateUpdater,
   SetQueryState,
-  DeepPartial,
 } from '../types';
 import { NO_PARAM, normalizeOptions, shouldRemoveParam } from '../utils';
 
@@ -32,15 +31,21 @@ export function useCoreQueryState<T>(
   key: string,
   defaultValue: T,
   options?: UseQueryStateOptions<T>,
-  historyAdapter: HistoryAdapter = new BrowserHistoryAdapter()
+  historyAdapter?: HistoryAdapter
 ): UseQueryStateReturn<T, typeof defaultValue> {
   //  if no default value was be passed, assumes with 'null'
   const _defaultValue = isNullish(defaultValue) ? null : defaultValue;
 
-  const config = React.useMemo(
-    () => normalizeOptions(options, _defaultValue),
-    [options, _defaultValue]
+  const configRef = React.useRef(normalizeOptions(options, _defaultValue));
+
+  const adapter = React.useMemo(
+    () => historyAdapter ?? new BrowserHistoryAdapter(),
+    [historyAdapter]
   );
+
+  React.useEffect(() => {
+    configRef.current = normalizeOptions(options, _defaultValue);
+  }, [options, _defaultValue]);
 
   const getSnap = React.useCallback(() => readParam(key) ?? NO_PARAM, [key]);
   const getServerSnap = React.useCallback(() => NO_PARAM, []);
@@ -58,31 +63,33 @@ export function useCoreQueryState<T>(
     if (raw === NO_PARAM) return _defaultValue;
     try {
       const stringValue = decodeURIComponent(String(raw));
-      return config.parse(stringValue) ?? _defaultValue;
+      return configRef.current.parse(stringValue) ?? _defaultValue;
     } catch (error) {
       console.warn(`Error parsing query param "${key}":`, error);
       return _defaultValue;
     }
-  }, [raw, _defaultValue, config.parse, key]);
+  }, [raw, _defaultValue, key]);
 
-  /**
-   * Updates the value of the query string.
-   *
-   * - `setValue(null)` → removes the parameter from the URL.
-   * - `setValue(defaultValue)` → resets to the default value (and may remove it if `removeIfDefault` is enabled).
-   * - `setValue(prev => prev + 1)` → functional update (same behavior as React's `useState`).
-   * - `setValue({ partial: true })` → merges partial objects while preserving the current state.
-   */
+  const currentValueRef = React.useRef(currentValue);
+
+  React.useEffect(() => {
+    currentValueRef.current = currentValue;
+  }, [currentValue]);
+
   const setValue = React.useCallback<SetQueryState<any>>(
     ((valueOrUpdater: T | StateUpdater<T>, mode?: HistoryMode) => {
       try {
         let nextState: T | null;
 
         if (typeof valueOrUpdater === 'function') {
-          nextState = (valueOrUpdater as StateUpdater<T>)(currentValue as T);
+          nextState = (valueOrUpdater as StateUpdater<T>)(
+            currentValueRef.current as T
+          );
         } else {
           nextState = valueOrUpdater as T;
         }
+
+        const config = configRef.current;
         const actualMode = mode ?? config.history;
         const shallow = config.shallow;
         const scroll = config.scroll;
@@ -102,7 +109,7 @@ export function useCoreQueryState<T>(
           if (currentParam !== null) {
             writeParam(key, null, actualMode, {
               shallow,
-              historyAdapter,
+              historyAdapter: adapter,
               scroll,
               rateLimit,
             });
@@ -120,7 +127,7 @@ export function useCoreQueryState<T>(
 
         writeParam(key, serialized, actualMode, {
           shallow,
-          historyAdapter,
+          historyAdapter: adapter,
           rateLimit,
           scroll,
         });
@@ -128,7 +135,7 @@ export function useCoreQueryState<T>(
         console.warn(`Error setting query param "${key}":`, error);
       }
     }) as SetQueryState<T>,
-    [currentValue, key, config, defaultValue, historyAdapter]
+    [key, _defaultValue, adapter]
   );
 
   return [currentValue as T, setValue];

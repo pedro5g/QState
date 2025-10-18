@@ -116,6 +116,7 @@ export type CreateParserBuilder<T> = Required<ParserConfig<T>> &
   } & { readonly defaultValue?: T };
 
 export type Require<T, K extends keyof T> = Pick<Required<T>, K> & Omit<T, K>;
+export type Optional<T, K extends keyof T> = Partial<Pick<T, K>> & Omit<T, K>;
 
 declare global {
   interface Window {

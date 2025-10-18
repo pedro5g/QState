@@ -1,4 +1,4 @@
-import type { HistoryMode, HookOptions, Require } from '@qstate/core';
+import type { HistoryMode, HookOptions, Optional } from '@qstate/core';
 
 export type DeepPartial<T> = T extends object
   ? { [K in keyof T]?: DeepPartial<T[K]> }
@@ -23,9 +23,34 @@ export type ParserConfig<T> =
       equals?: (a: T, b: T) => boolean;
     };
 
+export type QueryStateConfig<T extends Record<string, any>> = {
+  readonly [K in keyof T]: UseQueryStateOptionsObject<T[K]> | T[K];
+};
+
+export type QueryStateValues<Cfg extends Record<string, any>> = {
+  [K in keyof Cfg]: ParsedFromParserObject<Cfg[K]>;
+};
+
+export type QueryStateSetters<Cfg extends Record<string, any>> = {
+  [K in keyof Cfg]: SetQueryState<ParsedFromParserObject<Cfg[K]>>;
+};
+
+export type ParsedFromParserObject<P> = P extends { defaultValue: infer D }
+  ? D
+  : P extends ParserConfig<infer U>
+    ? U | null
+    : P;
+
+export type ParsedFromParser<P> =
+  P extends ParserConfig<infer U>
+    ? U
+    : P extends { defaultValue: infer D }
+      ? D | null
+      : never;
+
 export type UseQueryStateOptions<T> = HookOptions & ParserConfig<T>;
 export type UseQueryStateOptionsObject<T> = UseQueryStateOptions<T> & {
-  defaultValue?: T;
+  defaultValue: T;
 };
 
 export type UseQueryStateReturn<
@@ -33,13 +58,6 @@ export type UseQueryStateReturn<
   Default,
   Type = Default extends undefined ? Parsed | null : Parsed,
 > = [Type, SetQueryState<Type>];
-
-export type ParserIsPresent<TOptions, Parsed> =
-  TOptions extends UseQueryStateOptions<any>
-    ? TOptions['parse'] extends undefined
-      ? string
-      : Parsed
-    : never;
 
 export type ReturnTypeResolveArgs<T> =
   | {

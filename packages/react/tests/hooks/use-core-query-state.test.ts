@@ -591,4 +591,242 @@ describe('hook: useCoreQueryState', () => {
       expect(unsubscribe).toHaveBeenCalled();
     });
   });
+
+  describe('performance and stability', () => {
+    it('should keep setValue reference stable with same dependencies', () => {
+      (readParam as Mock).mockReturnValue('1');
+      (subscribeQS as Mock).mockImplementation(() => () => {});
+
+      const adapter = new BrowserHistoryAdapter();
+      const options = { history: 'push' as const };
+
+      const { result, rerender } = renderHook(() =>
+        useCoreQueryState('counter', 1, options, adapter)
+      );
+
+      const firstSetter = result.current[1];
+      rerender();
+
+      const secondSetter = result.current[1];
+
+      expect(firstSetter).toBe(secondSetter);
+    });
+
+    it('should use latest value in updater function after value changes', () => {
+      const mock = createSubscribeMock('5');
+      (shouldRemoveParam as unknown as Mock).mockReturnValue(false);
+
+      const { result } = renderHook(() => useCoreQueryState('count', 0));
+
+      expect(result.current[0]).toBe(5);
+
+      (readParam as Mock).mockReturnValue('10');
+      act(() => mock.trigger());
+      expect(result.current[0]).toBe(10);
+
+      act(() => {
+        result.current[1]((prev) => prev + 5);
+      });
+
+      expectWriteCalled('count', '15');
+    });
+
+    it('should not recreate setValue when config options remain stable', () => {
+      const stableConfig = {
+        history: 'replace' as const,
+        shallow: true,
+        scroll: false,
+      };
+
+      (readParam as Mock).mockReturnValue('1');
+      (subscribeQS as Mock).mockImplementation(() => () => {});
+
+      const { result, rerender } = renderHook(() =>
+        useCoreQueryState('test', 1, stableConfig)
+      );
+
+      const firstSetter = result.current[1];
+      rerender();
+
+      const secondSetter = result.current[1];
+
+      expect(firstSetter).toBe(secondSetter);
+    });
+
+    it('should maintain setValue identity across multiple setValue calls', () => {
+      const stableConfig = {
+        history: 'replace' as const,
+        shallow: true,
+        scroll: false,
+      };
+
+      (readParam as Mock).mockReturnValue('1');
+      (subscribeQS as Mock).mockImplementation(() => () => {});
+
+      const { result } = renderHook(() =>
+        useCoreQueryState('test', 1, stableConfig)
+      );
+      const firstSetter = result.current[1];
+
+      act(() => {
+        result.current[1](2);
+      });
+
+      const secondSetter = result.current[1];
+
+      expect(firstSetter).toBe(secondSetter);
+    });
+  });
+
+  describe('edge cases with updater functions', () => {
+    it('should handle updater returning same value as current', () => {
+      (readParam as Mock).mockReturnValue('5');
+      (shouldRemoveParam as unknown as Mock).mockReturnValue(false);
+      (subscribeQS as Mock).mockImplementation(() => () => {});
+
+      const { result } = renderHook(() => useCoreQueryState('val', 5));
+
+      act(() => {
+        result.current[1]((prev) => prev);
+      });
+
+      expect(writeParam).not.toHaveBeenCalled();
+    });
+
+    it('should handle chained updaters with subscription updates', () => {
+      const mock = createSubscribeMock('10');
+      (shouldRemoveParam as unknown as Mock).mockReturnValue(false);
+
+      const { result } = renderHook(() => useCoreQueryState('num', 0));
+
+      expect(result.current[0]).toBe(10);
+
+      act(() => {
+        result.current[1]((prev) => prev + 1);
+      });
+      expectWriteCalled('num', '11');
+
+      (readParam as Mock).mockReturnValue('11');
+      act(() => {
+        mock.trigger();
+      });
+
+      expect(result.current[0]).toBe(11);
+
+      act(() => {
+        result.current[1]((prev) => prev * 2);
+      });
+      expectWriteCalled('num', '22');
+    });
+
+    it('should handle updater with complex transformations', () => {
+      (readParam as Mock).mockReturnValue(JSON.stringify({ count: 5 }));
+      (shouldRemoveParam as unknown as Mock).mockReturnValue(false);
+      (subscribeQS as Mock).mockImplementation(() => () => {});
+
+      const { result } = renderHook(() =>
+        useCoreQueryState('data', { count: 0 })
+      );
+
+      expect(result.current[0]).toEqual({ count: 5 });
+
+      act(() => {
+        result.current[1]((prev) => ({ count: prev.count + 10 }));
+      });
+
+      expectWriteCalled('data', JSON.stringify({ count: 15 }));
+    });
+  });
+
+  describe('synchronization edge cases', () => {
+    it('should handle rapid external URL changes correctly', () => {
+      const mock = createSubscribeMock('a');
+      const { result } = renderHook(() => useCoreQueryState('token', ''));
+
+      expect(result.current[0]).toBe('a');
+
+      (readParam as Mock).mockReturnValue('b');
+      act(() => mock.trigger());
+      expect(result.current[0]).toBe('b');
+
+      (readParam as Mock).mockReturnValue('c');
+      act(() => mock.trigger());
+      expect(result.current[0]).toBe('c');
+
+      (readParam as Mock).mockReturnValue('d');
+      act(() => mock.trigger());
+      expect(result.current[0]).toBe('d');
+    });
+
+    it('should handle updater during external change race condition', () => {
+      const mock = createSubscribeMock('5');
+      (shouldRemoveParam as unknown as Mock).mockReturnValue(false);
+
+      const { result } = renderHook(() => useCoreQueryState('count', 0));
+
+      expect(result.current[0]).toBe(5);
+
+      (readParam as Mock).mockReturnValue('10');
+      act(() => mock.trigger());
+
+      act(() => {
+        mock.trigger();
+        result.current[1]((prev) => prev + 1);
+      });
+
+      expectWriteCalled('count', '11');
+    });
+  });
+
+  describe('memory and cleanup', () => {
+    it('should cleanup ref on unmount', () => {
+      (readParam as Mock).mockReturnValue('test');
+      (subscribeQS as Mock).mockImplementation(() => () => {});
+
+      const { result, unmount } = renderHook(() =>
+        useCoreQueryState('key', '')
+      );
+
+      const setter = result.current[1];
+
+      unmount();
+
+      expect(() => {
+        setter('new-value');
+      }).not.toThrow();
+    });
+  });
+
+  describe('config changes', () => {
+    it('should update behavior when config changes', () => {
+      (readParam as Mock).mockReturnValue(null);
+      (shouldRemoveParam as unknown as Mock).mockReturnValue(false);
+      (subscribeQS as Mock).mockImplementation(() => () => {});
+
+      let config = { encode: false };
+      const { result, rerender } = renderHook(
+        ({ opts }) => useCoreQueryState('key', '', opts),
+        { initialProps: { opts: config } }
+      );
+
+      act(() => result.current[1]('test value'));
+      expect(writeParam).toHaveBeenCalledWith(
+        'key',
+        'test value',
+        'replace',
+        expect.any(Object)
+      );
+
+      config = { encode: true };
+      rerender({ opts: config });
+
+      act(() => result.current[1]('test value'));
+      expect(writeParam).toHaveBeenCalledWith(
+        'key',
+        encodeURIComponent('test value'),
+        'replace',
+        expect.any(Object)
+      );
+    });
+  });
 });
