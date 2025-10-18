@@ -28,6 +28,7 @@ vi.mock('@qstate/core', async (originalImport) => {
     BrowserHistoryAdapter: vi.fn().mockImplementation(() => ({
       push: vi.fn(),
       replace: vi.fn(),
+      getPathname: vi.fn().mockImplementation(() => '/test/page'),
     })),
   };
 });
@@ -55,6 +56,9 @@ describe('hook: useCoreQueryState', () => {
   let browserHistoryAdapter: BrowserHistoryAdapter;
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.stubGlobal('location', {
+      pathname: '/test/page',
+    });
     browserHistoryAdapter = new BrowserHistoryAdapter();
   });
 
@@ -72,12 +76,14 @@ describe('hook: useCoreQueryState', () => {
         historyAdapter: {
           push: expect.any(Function),
           replace: expect.any(Function),
+          getPathname: expect.any(Function),
         },
         rateLimit: {
           mode: 'throttle',
           timeMs: 50,
         },
         scroll: false,
+        pathname: '/test/page',
       });
     });
 
@@ -108,6 +114,7 @@ describe('hook: useCoreQueryState', () => {
           historyAdapter: {
             push: expect.any(Function),
             replace: expect.any(Function),
+            getPathname: expect.any(Function),
           },
           rateLimit: {
             mode: 'debounce',
@@ -115,6 +122,7 @@ describe('hook: useCoreQueryState', () => {
           },
           scroll: true,
           shallow: false,
+          pathname: '/test/page',
         }
       );
     });
@@ -134,12 +142,14 @@ describe('hook: useCoreQueryState', () => {
         historyAdapter: {
           push: expect.any(Function),
           replace: expect.any(Function),
+          getPathname: expect.any(Function),
         },
         rateLimit: {
           mode: 'throttle',
           timeMs: 50,
         },
         scroll: false,
+        pathname: '/test/page',
       });
 
       act(() => result.current[1]('test-test', 'push'));
@@ -149,22 +159,26 @@ describe('hook: useCoreQueryState', () => {
         historyAdapter: {
           push: expect.any(Function),
           replace: expect.any(Function),
+          getPathname: expect.any(Function),
         },
         rateLimit: {
           mode: 'throttle',
           timeMs: 50,
         },
         scroll: false,
+        pathname: '/test/page',
       });
     });
 
     it('should called writeParam with custom history adapter', () => {
       const mockPush = vi.fn();
       const mockReplace = vi.fn();
+      const mockGetPathname = vi.fn().mockImplementation(() => '/test/page');
 
       const customAdapter = {
         push: mockPush,
         replace: mockReplace,
+        getPathname: mockGetPathname,
       };
 
       (writeParam as Mock).mockImplementation((key, value, mode, options) => {
@@ -191,6 +205,7 @@ describe('hook: useCoreQueryState', () => {
           timeMs: 50,
         },
         scroll: false,
+        pathname: '/test/page',
       });
       expect(mockReplace).toHaveBeenCalledOnce();
       expect(mockPush).not.toHaveBeenCalled();

@@ -27,6 +27,7 @@ export type FullOptions = Options & {
 export interface HistoryAdapter {
   push(url: string, options?: { scroll?: boolean }): void;
   replace(url: string, options?: { scroll?: boolean }): void;
+  getPathname(): string;
 }
 
 export interface Queue<TData> {

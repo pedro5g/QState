@@ -112,6 +112,7 @@ export function useCoreQueryState<T>(
               historyAdapter: adapter,
               scroll,
               rateLimit,
+              pathname: adapter.getPathname(),
             });
           }
           return;
@@ -130,6 +131,7 @@ export function useCoreQueryState<T>(
           historyAdapter: adapter,
           rateLimit,
           scroll,
+          pathname: adapter.getPathname(),
         });
       } catch (error) {
         console.warn(`Error setting query param "${key}":`, error);

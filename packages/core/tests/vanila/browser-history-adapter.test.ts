@@ -12,6 +12,10 @@ describe('BrowserHistoryAdapter', () => {
     });
 
     vi.stubGlobal('scrollTo', vi.fn());
+
+    vi.stubGlobal('location', {
+      pathname: '/test/page',
+    });
   });
 
   it('should call window.history.pushState on push', () => {
@@ -44,5 +48,9 @@ describe('BrowserHistoryAdapter', () => {
       top: 0,
       behavior: 'smooth',
     });
+  });
+
+  it('should return current pathname', () => {
+    expect(sut.getPathname()).toBe('/test/page');
   });
 });

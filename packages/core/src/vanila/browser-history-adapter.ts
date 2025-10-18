@@ -10,4 +10,8 @@ export class BrowserHistoryAdapter implements HistoryAdapter {
     window.history.replaceState({}, '', url);
     if (options?.scroll) window.scrollTo({ top: 0, behavior: 'smooth' });
   }
+
+  getPathname(): string {
+    return window.location.pathname;
+  }
 }
