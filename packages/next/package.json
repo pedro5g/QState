@@ -1,5 +1,5 @@
 {
-  "name": "@qstate/next",
+  "name": "@query-state/next",
   "version": "1.0.0",
   "description": "Next.js adapter for QState",
   "main": "./dist/index.js",
@@ -31,12 +31,12 @@
     "clean": "rm -rf dist *.tsbuildinfo"
   },
   "dependencies": {
-    "@qstate/core": "workspace:*",
-    "@qstate/react": "workspace:*"
+    "@query-state/react": "workspace:*",
+    "@query-state/core": "workspace:*"
   },
   "peerDependencies": {
-    "@qstate/core": "*",
-    "@qstate/react": "*",
+    "@query-state/core": "*",
+    "@query-state/react": "*",
     "next": "^13.0.0 || ^15.0.0",
     "react": "^18.0.0 || ^19.0.0"
   },
@@ -61,5 +61,8 @@
     "query",
     "url"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
 }

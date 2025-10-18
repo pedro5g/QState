@@ -1,9 +1,9 @@
 'use client';
-import { useQState } from '@qstate/next';
+import { useQState } from '@query-state/next';
 import Image from 'next/image';
 
 export function ButtonTest() {
-  const [value, setValue] = useQState('rotate', false, { shallow: true });
+  const [value, setValue] = useQState('rotate', false, { shallow: false });
   console.log('render ButtonTest');
   return (
     <button

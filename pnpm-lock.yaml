@@ -42,10 +42,10 @@ importers:
 
   apps/web:
     dependencies:
-      '@qstate/core':
+      '@query-state/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@qstate/next':
+      '@query-state/next':
         specifier: workspace:*
         version: link:../../packages/next
       next:
@@ -109,10 +109,10 @@ importers:
 
   packages/next:
     dependencies:
-      '@qstate/core':
+      '@query-state/core':
         specifier: workspace:*
         version: link:../core
-      '@qstate/react':
+      '@query-state/react':
         specifier: workspace:*
         version: link:../react
     devDependencies:
@@ -155,7 +155,7 @@ importers:
 
   packages/react:
     dependencies:
-      '@qstate/core':
+      '@query-state/core':
         specifier: workspace:*
         version: link:../core
     devDependencies:

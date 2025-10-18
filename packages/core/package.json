@@ -1,5 +1,5 @@
 {
-  "name": "@qstate/core",
+  "name": "@query-state/core",
   "version": "1.0.0",
   "description": "Core query state management",
   "type": "module",
@@ -49,5 +49,8 @@
     "qstate",
     "core"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
 }

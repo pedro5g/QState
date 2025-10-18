@@ -2,6 +2,7 @@
   "name": "qstate",
   "version": "1.0.0",
   "description": "Lightweight React hook for managing URL query parameters with granular re-renders",
+  "private": true,
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
@@ -11,8 +12,13 @@
     "type-check": "turbo run type-check",
     "clean": "turbo run clean && rm -rf node_modules",
     "changeset": "changeset",
-    "version-packages": "changeset version",
-    "release": "pnpm build && changeset publish"
+    "changeset:version": "changeset version",
+    "changeset:publish": "changeset publish",
+    "release": "pnpm build && pnpm changeset:publish",
+    "release:check": "pnpm build && pnpm test && pnpm lint && pnpm type-check",
+    "version:patch": "changeset version",
+    "version:minor": "changeset version",
+    "version:major": "changeset version"
   },
   "peerDependencies": {
     "next": "^14.0.0 || ^15.0.0",

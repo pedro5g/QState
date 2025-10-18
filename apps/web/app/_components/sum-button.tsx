@@ -1,7 +1,7 @@
 'use client';
 
-import { qsParserInteger } from '@qstate/core';
-import { useQState } from '@qstate/next';
+import { qsParserInteger } from '@query-state/core';
+import { useQState } from '@query-state/next';
 
 export const SumButton = () => {
   const { setSum } = useSum();
