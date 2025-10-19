@@ -1,6 +1,6 @@
 {
   "name": "@query-state/next",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Next.js adapter for QState",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

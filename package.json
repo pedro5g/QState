@@ -4,9 +4,7 @@
   "description": "Lightweight React hook for managing URL query parameters with granular re-renders",
   "private": true,
   "workspaces": [
-    "packages/core",
-    "packages/react",
-    "packages/next",
+    "packages/*",
     "apps/*"
   ],
   "scripts": {
