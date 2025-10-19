@@ -1,10 +1,10 @@
 'use client';
 import React from 'react';
-import { type UseQState } from '@qstate/react';
+import { type UseQState } from '@query-state/react';
 import { useRouter, usePathname } from 'next/navigation.js';
-import { resolveArgs } from '@qstate/react';
-import { useQStateCore } from '@qstate/react';
-import type { HistoryAdapter } from '@qstate/core';
+import { resolveArgs } from '@query-state/react';
+import { useQStateCore } from '@query-state/react';
+import type { HistoryAdapter } from '@query-state/core';
 
 export const useQState: UseQState = ((...args: any[]) => {
   const router = useRouter();

@@ -8,7 +8,7 @@ import {
   type HistoryAdapter,
   type HistoryMode,
   BrowserHistoryAdapter,
-} from '@qstate/core';
+} from '@query-state/core';
 import type {
   UseQueryStateOptions,
   UseQueryStateReturn,

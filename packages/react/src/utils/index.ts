@@ -10,7 +10,7 @@ import {
   qsParserString,
   type ParserConfig,
   type Require,
-} from '@qstate/core';
+} from '@query-state/core';
 import type {
   ReturnTypeResolveArgs,
   UseQueryStateOptions,

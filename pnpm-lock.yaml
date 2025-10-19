@@ -43,11 +43,11 @@ importers:
   apps/web:
     dependencies:
       '@query-state/core':
-        specifier: workspace:*
-        version: link:../../packages/core
+        specifier: ^1.0.0
+        version: 1.0.0
       '@query-state/next':
-        specifier: workspace:*
-        version: link:../../packages/next
+        specifier: ^1.0.0
+        version: 1.0.0(@query-state/core@1.0.0)(@query-state/react@1.0.0(@query-state/core@1.0.0)(react@19.1.0))(next@15.5.6(@babel/core@7.28.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)
       next:
         specifier: 15.5.6
         version: 15.5.6(@babel/core@7.28.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -965,6 +965,23 @@ packages:
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
+
+  '@query-state/core@1.0.0':
+    resolution: {integrity: sha512-/oazbFojXwji++rO6/LALafaXtvQSB+fg4BA+JpJl+4s9UxfrmVustFlNPhxO3dAa7JX5qziIKELX/cY6npcYw==}
+
+  '@query-state/next@1.0.0':
+    resolution: {integrity: sha512-i7t5EmfeBpw7C6pg/zU5Loi3VGJiXHqPIBX3mxPd1JX4JrhttXu8xs96u1CT1Ab0xMBIv4PFnrLV+YBKkvk+xw==}
+    peerDependencies:
+      '@query-state/core': '*'
+      '@query-state/react': '*'
+      next: ^13.0.0 || ^15.0.0
+      react: ^18.0.0 || ^19.0.0
+
+  '@query-state/react@1.0.0':
+    resolution: {integrity: sha512-KqIqxucK7dikQSrJcx36BfzPrQQkF9JmZtsgRXPJvjRAfy9ACisDLGyCFPVK6ga4gBhbPM7KLwqaB7ahFDYCIA==}
+    peerDependencies:
+      '@query-state/core': '*'
+      react: ^18.0.0 || ^19.0.0
 
   '@rolldown/pluginutils@1.0.0-beta.27':
     resolution: {integrity: sha512-+d0F4MKMCbeVUJwG96uQ4SgAznZNSq93I3V+9NHA4OpvqG8mRCpGdKmK8l/dl02h2CCDHwW2FqilnTyDcAnqjA==}
@@ -3543,6 +3560,20 @@ snapshots:
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
+
+  '@query-state/core@1.0.0': {}
+
+  '@query-state/next@1.0.0(@query-state/core@1.0.0)(@query-state/react@1.0.0(@query-state/core@1.0.0)(react@19.1.0))(next@15.5.6(@babel/core@7.28.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@query-state/core': 1.0.0
+      '@query-state/react': 1.0.0(@query-state/core@1.0.0)(react@19.1.0)
+      next: 15.5.6(@babel/core@7.28.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+
+  '@query-state/react@1.0.0(@query-state/core@1.0.0)(react@19.1.0)':
+    dependencies:
+      '@query-state/core': 1.0.0
+      react: 19.1.0
 
   '@rolldown/pluginutils@1.0.0-beta.27': {}
 

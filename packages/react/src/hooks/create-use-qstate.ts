@@ -3,7 +3,7 @@
 import React from 'react';
 import { resolveArgs } from '../utils';
 import { useQStateCore } from './use-qstate-core';
-import { type HistoryAdapter, type Optional } from '@qstate/core';
+import { type HistoryAdapter, type Optional } from '@query-state/core';
 import type {
   ParsedFromParser,
   QueryStateConfig,

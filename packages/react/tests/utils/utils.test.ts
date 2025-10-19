@@ -5,7 +5,7 @@ import {
   qsParserInteger,
   qsParserString,
   type RateLimitConfig,
-} from '@qstate/core';
+} from '@query-state/core';
 import {
   createEqualityChecker,
   shouldRemoveParam,

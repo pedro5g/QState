@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { createUseQState } from '../../src/hooks/create-use-qstate';
 import { resolveArgs } from '../../src/utils';
 import { useQStateCore } from '../../src/hooks/use-qstate-core';
-import { BrowserHistoryAdapter } from '@qstate/core';
+import { BrowserHistoryAdapter } from '@query-state/core';
 
 vi.mock('../../src/utils', () => ({
   resolveArgs: vi.fn(),
@@ -12,7 +12,7 @@ vi.mock('../../src/hooks/use-qstate-core', () => ({
   useQStateCore: vi.fn(),
 }));
 
-vi.mock('@qstate/core', () => ({
+vi.mock('@query-state/core', () => ({
   BrowserHistoryAdapter: vi.fn().mockImplementation(() => ({
     push: vi.fn(),
     replace: vi.fn(),

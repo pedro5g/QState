@@ -4,7 +4,7 @@ import {
   readParam,
   writeParam,
   subscribeQS,
-} from '@qstate/core';
+} from '@query-state/core';
 import type { Mock } from 'vitest';
 import { shouldRemoveParam } from '../../src/utils';
 import { useQStateCore } from '../../src/hooks/use-qstate-core';
@@ -17,7 +17,7 @@ vi.mock('../../src/utils', async (originalImport) => {
   };
 });
 
-vi.mock('@qstate/core', async (originalImport) => {
+vi.mock('@query-state/core', async (originalImport) => {
   const actual = (await originalImport()) as any;
   return {
     ...actual,
