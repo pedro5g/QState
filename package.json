@@ -1,8 +1,14 @@
 {
-  "name": "qstate",
+  "name": "query-state",
   "version": "1.0.0",
   "description": "Lightweight React hook for managing URL query parameters with granular re-renders",
   "private": true,
+  "workspaces": [
+    "packages/core",
+    "packages/react",
+    "packages/next",
+    "apps/*"
+  ],
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
